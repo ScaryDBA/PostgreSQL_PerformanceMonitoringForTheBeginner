@@ -18,7 +18,7 @@ pg_restore -C -d postgres -U postgres /bu/bluebox_v0.3.dump
 
 ## open bash within the container
 docker exec -it PerfTuning "bash";
-## edit the config file
+## in bash, edit the config file
 vi ~/pgdata/data/postgresql.conf
 
 ## i to insert, esc to quit inserting
@@ -32,6 +32,7 @@ vi ~/pgdata/data/postgresql.conf
 
 ## restarting the cluster is required
 pg_ctl stop
+## start the container
 docker start PerfTuning
 
 ## get back into the container and get the file name
@@ -55,13 +56,19 @@ pg_ctl stop
 docker start PerfTuning
 
 ## add the following to the postgresql.conf file
-auto_explain.log_min_duration = '1s'  -- Log queries that take longer than 1 second
-auto_explain.log_analyze = true       -- Include actual execution time
-auto_explain.log_buffers = true       -- Include buffer usage
-auto_explain.log_timing = true        -- Include detailed timing information
-auto_explain.log_verbose = true       -- Include detailed information
+## running queries
+ALTER SYSTEM SET auto_explain.log_min_duration = '1s';  -- Log queries that take longer than 1 second
+ALTER SYSTEM SET auto_explain.log_analyze = TRUE;       -- Include actual execution time
+ALTER SYSTEM SET auto_explain.log_buffers = TRUE;       -- Include buffer usage
+ALTER SYSTEM SET auto_explain.log_timing = TRUE;        -- Include detailed timing information
+ALTER SYSTEM SET auto_explain.log_verbose = TRUE;       -- Include detailed information
 
+## back in bash
 pg_ctl reload
+
+
+
+## and now for pg_stat_statements
 
 ## one more time into the postgresql.conf file
 ## find /log_line_prefix
@@ -73,4 +80,11 @@ pg_ctl reload
 ## restarting the cluster is required
 pg_ctl stop
 docker start PerfTuning
+
+## add the following to the postgresql.conf file
+ALTER SYSTEM SET pg_stat_statements.track = 'top'; --can be none, top, all, top is default means user statements
+ALTER SYSTEM SET pg_stat_statements.track_planning = 'on'; --comes with performance hit
+--also track_utility, defaults to on, for tracking SELECT INSERT UPDATE
+--also save to have query statistics survive a reboot, on by default
+
 
