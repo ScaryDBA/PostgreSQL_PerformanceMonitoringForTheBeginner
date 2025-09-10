@@ -1,4 +1,5 @@
-##set up a new PostgreSQL cluster
+## set up a new PostgreSQL cluster
+## not intended as demo code, search for '## demo'
 docker run `
     --name PerfTuning `
     -p 5432:5432 `
@@ -13,8 +14,18 @@ docker run `
 ##load up bluebox_dev database
 pg_restore -C -d postgres -U postgres /bu/bluebox_v0.3.dump 
 
+## just in case, in bash
+cp ~/pgdata/data/postgresql.conf ~/pgdata/data/postgresql.conf.bak
+
+## quick switches, bash
+## to just run simple logs
+mv ~/pgdata/data/postgresql.conf.start ~/pgdata/data/postgresql.conf
+## to run full log info
+mv ~/pgdata/data/postgresql.conf.full ~/pgdata/data/postgresql.conf
+
 
 ## set up above, below are demos
+## demo
 
 ## open bash within the container
 docker exec -it PerfTuning "bash";
@@ -30,7 +41,7 @@ vi ~/pgdata/data/postgresql.conf
 ## search for /log_duration
 ## remove comment and change value from 'off' to 'on'
 
-## restarting the cluster is required
+## restarting the cluster is required, sometimes
 pg_ctl stop
 ## start the container
 docker start PerfTuning
@@ -43,8 +54,9 @@ ls
 
 ## run a query over in DBeaver & show the log
 
-## expand the log information captured
+## expand the log information captured, in bash
 vi ~/pgdata/data/postgresql.conf
+
 
 ## find /log_statement
 
@@ -55,13 +67,6 @@ vi ~/pgdata/data/postgresql.conf
 pg_ctl stop
 docker start PerfTuning
 
-## add the following to the postgresql.conf file
-## running queries
-ALTER SYSTEM SET auto_explain.log_min_duration = '1s';  -- Log queries that take longer than 1 second
-ALTER SYSTEM SET auto_explain.log_analyze = TRUE;       -- Include actual execution time
-ALTER SYSTEM SET auto_explain.log_buffers = TRUE;       -- Include buffer usage
-ALTER SYSTEM SET auto_explain.log_timing = TRUE;        -- Include detailed timing information
-ALTER SYSTEM SET auto_explain.log_verbose = TRUE;       -- Include detailed information
 
 ## back in bash
 pg_ctl reload
@@ -69,6 +74,8 @@ pg_ctl reload
 
 
 ## and now for pg_stat_statements
+docker exec -it PerfTuning "bash";
+vi ~/pgdata/data/postgresql.conf
 
 ## one more time into the postgresql.conf file
 ## find /log_line_prefix
@@ -81,10 +88,5 @@ pg_ctl reload
 pg_ctl stop
 docker start PerfTuning
 
-## add the following to the postgresql.conf file
-ALTER SYSTEM SET pg_stat_statements.track = 'top'; --can be none, top, all, top is default means user statements
-ALTER SYSTEM SET pg_stat_statements.track_planning = 'on'; --comes with performance hit
---also track_utility, defaults to on, for tracking SELECT INSERT UPDATE
---also save to have query statistics survive a reboot, on by default
 
 
