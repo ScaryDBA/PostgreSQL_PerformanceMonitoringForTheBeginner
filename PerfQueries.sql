@@ -1,52 +1,3 @@
---just a sample query
-SELECT * FROM bluebox.film
-WHERE release_date > '2023-10-01'::date;
-
-
---remember to get the correct file name
-SELECT pg_current_logfile();
-
-SELECT pg_read_file('log/postgresql-2025-09-10_193302.log');
-
-
-
-
---Longer running query
-SELECT
-	f.title,
-	s.phone,
-	c.full_name,
-	r.rental_period
-FROM
-	rental AS r
-JOIN inventory AS i
-ON
-	r.inventory_id = i.inventory_id
-JOIN customer AS c
-ON
-	r.customer_id = c.customer_id
-JOIN film AS f
-ON
-	i.film_id = f.film_id
-JOIN store AS s
-ON
-	i.store_id = s.store_id
-ORDER BY
-	r.rental_period ASC;
-
-
-
---additional log settings
-ALTER SYSTEM SET auto_explain.log_min_duration = '1s';  -- Log queries that take longer than 1 second
-ALTER SYSTEM SET auto_explain.log_analyze = TRUE;       -- Include actual execution time
-ALTER SYSTEM SET auto_explain.log_buffers = TRUE;       -- Include buffer usage
-ALTER SYSTEM SET auto_explain.log_timing = TRUE;        -- Include detailed timing information
-ALTER SYSTEM SET auto_explain.log_verbose = TRUE;       -- Include detailed information
-
-
-
-
-
 --CSS
 --starting with pg_stat_activity
 SELECT
@@ -101,6 +52,61 @@ WHERE
 
 --get the id for the query
 SELECT pg_stat_statements_reset(0, 0, -3937625263988876720);
+
+
+
+
+
+--ensure logging is enabled using bash through VSCode
+SELECT pg_reload_conf();
+
+--just a sample query
+SELECT * FROM bluebox.film
+WHERE release_date > '2023-10-01'::date;
+
+
+--remember to get the correct file name
+SELECT pg_current_logfile();
+
+SELECT pg_read_file('log/postgresql-2026-01-27_092405.log');
+SELECT pg_read_file('log/postgresql-2026-01-27_094502.log');
+
+
+
+
+--Longer running query
+SELECT
+	f.title,
+	s.phone,
+	c.full_name,
+	r.rental_period
+FROM
+	rental AS r
+JOIN inventory AS i
+ON
+	r.inventory_id = i.inventory_id
+JOIN customer AS c
+ON
+	r.customer_id = c.customer_id
+JOIN film AS f
+ON
+	i.film_id = f.film_id
+JOIN store AS s
+ON
+	i.store_id = s.store_id
+ORDER BY
+	r.rental_period ASC;
+
+
+
+--additional log settings
+ALTER SYSTEM SET auto_explain.log_min_duration = '1s';  -- Log queries that take longer than 1 second
+ALTER SYSTEM SET auto_explain.log_analyze = TRUE;       -- Include actual execution time
+ALTER SYSTEM SET auto_explain.log_buffers = TRUE;       -- Include buffer usage
+ALTER SYSTEM SET auto_explain.log_timing = TRUE;        -- Include detailed timing information
+ALTER SYSTEM SET auto_explain.log_verbose = TRUE;       -- Include detailed information
+
+SHOW auto_explain.log_min_duration;
 
 
 

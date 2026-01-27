@@ -1,3 +1,7 @@
+## Just a note, originally, this code assumed logs first, then pg_stat_statements
+## However, I now teach pg_stat_statements first, then logging
+## So, this code is a bit out of order compared to the slides
+
 ## set up a new PostgreSQL cluster
 ## not intended as demo code, search for '## demo'
 docker run `
@@ -13,6 +17,9 @@ docker run `
 
 ##load up bluebox_dev database
 pg_restore -C -d postgres -U postgres /bu/bluebox_v0.3.dump 
+
+## open up bash
+docker exec -it HamShackRadio "bash";
 
 ## just in case, in bash
 cp ~/pgdata/data/postgresql.conf ~/pgdata/data/postgresql.conf.bak
@@ -36,8 +43,8 @@ vi ~/pgdata/data/postgresql.conf
 ## :wq to save & quit
 ## yes, I use nano more than vi, but I'm not installing it
 
-## search for /logging_collector
-## remove comment and change value from 'off' to 'on'
+## search using the slash, /, for /logging_collector
+## remove comment, del, and change value from 'off' to 'on' using insert
 ## search for /log_duration
 ## remove comment and change value from 'off' to 'on'
 
