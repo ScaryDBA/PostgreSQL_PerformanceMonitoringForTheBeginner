@@ -1,3 +1,33 @@
+--a couple of sample queries, repeated inline below, to seed results, just in case
+SELECT * FROM inventory;
+
+SELECT * FROM bluebox.film
+WHERE release_date > '2023-10-01'::date;
+
+
+SELECT
+	f.title,
+	s.phone,
+	c.full_name,
+	r.rental_period
+FROM
+	rental AS r
+JOIN inventory AS i
+ON
+	r.inventory_id = i.inventory_id
+JOIN customer AS c
+ON
+	r.customer_id = c.customer_id
+JOIN film AS f
+ON
+	i.film_id = f.film_id
+JOIN store AS s
+ON
+	i.store_id = s.store_id
+ORDER BY
+	r.rental_period ASC;
+
+
 --CSS
 --starting with pg_stat_activity
 SELECT
@@ -27,6 +57,22 @@ ALTER SYSTEM SET pg_stat_statements.track_planning = 'on'; --comes with performa
 SELECT * from pg_stat_statements AS pss;
 
 
+
+
+SELECT
+	pss.query,
+	pss.min_exec_time,
+	pss.max_exec_time,
+	pss.total_exec_time,
+	pss.mean_exec_time,
+	pss.stddev_exec_time
+FROM
+	pg_stat_statements AS pss
+WHERE
+	pss.min_exec_time > 1000;
+
+
+
 --in order to know when the statistics are valid for
 SELECT * FROM pg_stat_statements_info;
 
@@ -35,7 +81,6 @@ SELECT * FROM pg_stat_statements_info;
 SELECT pg_stat_statements_reset(); --parameters include database id, user id, and query id
 SELECT pg_stat_statements_reset(userid Oid, dbid Oid, queryid bigint); --use zero to skip a value
 
---let's reset a query
 --let's reset a query
 SELECT * FROM inventory;
 
@@ -51,12 +96,12 @@ WHERE
 	query = 'SELECT * FROM inventory';
 
 --get the id for the query
-SELECT pg_stat_statements_reset(0, 0, -3937625263988876720);
+SELECT pg_stat_statements_reset(0, 0, 7539201864396598991);
 
 
 
 
-
+--Logging
 --ensure logging is enabled using bash through VSCode
 SELECT pg_reload_conf();
 
@@ -69,7 +114,7 @@ WHERE release_date > '2023-10-01'::date;
 SELECT pg_current_logfile();
 
 SELECT pg_read_file('log/postgresql-2026-01-27_092405.log');
-SELECT pg_read_file('log/postgresql-2026-01-27_094502.log');
+SELECT pg_read_file('log/postgresql-2026-01-27_101957.log');
 
 
 
